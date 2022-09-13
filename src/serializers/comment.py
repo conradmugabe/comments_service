@@ -8,6 +8,7 @@ class CommentJsonEncoder(json.JSONEncoder):
                 "id": str(o.id),
                 "commentOnId": o.commentOnId,
                 "commentBy": o.commentBy,
+                "body": o.body,
             }
             return to_serialize
         except AttributeError:

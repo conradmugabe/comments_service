@@ -10,16 +10,28 @@ from src.use_cases.comment_list import comment_list_use_case
 @pytest.fixture
 def domain_comments():
     comment1 = Comment(
-        id=uuid.uuid4(), commentOnId="test_blog_1", commentBy="test_user_1"
+        id=uuid.uuid4(),
+        commentOnId="test_blog_1",
+        commentBy="test_user_1",
+        body="test comment 1",
     )
     comment2 = Comment(
-        id=uuid.uuid4(), commentOnId="test_blog_2", commentBy="test_user_2"
+        id=uuid.uuid4(),
+        commentOnId="test_blog_2",
+        commentBy="test_user_2",
+        body="test comment 1",
     )
     comment3 = Comment(
-        id=uuid.uuid4(), commentOnId="test_blog_3", commentBy="test_user_3"
+        id=uuid.uuid4(),
+        commentOnId="test_blog_3",
+        commentBy="test_user_3",
+        body="test comment 1",
     )
     comment4 = Comment(
-        id=uuid.uuid4(), commentOnId="test_blog_4", commentBy="test_user_4"
+        id=uuid.uuid4(),
+        commentOnId="test_blog_4",
+        commentBy="test_user_4",
+        body="test comment 1",
     )
     return [comment1, comment2, comment3, comment4]
 
