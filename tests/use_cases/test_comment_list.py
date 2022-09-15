@@ -5,6 +5,7 @@ from unittest import mock
 
 from src.domain.comment import Comment
 from src.use_cases.comment_list import comment_list_use_case
+from src.requests.comment_list import CommentListRequest
 
 
 @pytest.fixture
@@ -40,7 +41,8 @@ def test_comment_list_without_parameters(domain_comments):
     repo = mock.Mock()
     repo.list.return_value = domain_comments
 
-    result = comment_list_use_case(repo)
+    request = CommentListRequest()
+    response = comment_list_use_case(repo, request)
 
     repo.list.assert_called_with()
-    assert result == domain_comments
+    assert response == domain_comments
