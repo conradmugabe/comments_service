@@ -1,4 +1,5 @@
 from flask import Flask
+from application.rest import comment
 
 
 def create_app(config_name):
@@ -9,8 +10,6 @@ def create_app(config_name):
 
     app.config.from_object(config_module)
 
-    @app.route("/")
-    def hello_world():
-        return "Hello, World!"
+    app.register_blueprint(comment.blueprint)
 
     return app
