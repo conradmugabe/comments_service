@@ -21,13 +21,13 @@ class UseCases:
         return self.repository.createComment(props)
 
     def updateComment(self, props: UpdateComment):
-        commentId, commentBy = props.get("id"), props.get("commentBy")
+        commentId, commentBy = props["id"], props["commentBy"]
         comment = self.__getCommentById(commentId)
         self.__isCommentAuthor(comment, commentBy)
         return self.repository.updateCommentById(props)
 
     def deleteComment(self, props: DeleteComment):
-        commentId, commentBy = props.get("id"), props.get("commentBy")
+        commentId, commentBy = props["id"], props["commentBy"]
         comment = self.__getCommentById(commentId)
         self.__isCommentAuthor(comment, commentBy)
         return self.repository.deleteCommentById(commentId)
