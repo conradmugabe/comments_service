@@ -1,14 +1,18 @@
 import json
 
+from src.entities.comment import Comment
+
 
 class CommentJsonEncoder(json.JSONEncoder):
-    def default(self, o):
+    def default(self, o: Comment):
         try:
             to_serialize = {
                 "id": str(o.id),
-                "commentOnId": o.commentOnId,
+                "comment": o.comment,
+                "commentOn": o.commentOn,
                 "commentBy": o.commentBy,
-                "body": o.body,
+                # "createdAt": o.createdAt.isoformat(),
+                # "updatedAt": o.updatedAt.isoformat(),
             }
             return to_serialize
         except AttributeError:
