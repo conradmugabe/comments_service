@@ -3,7 +3,7 @@ from unittest import mock
 from datetime import datetime
 
 from pytest import fixture, raises
-from src.dto.comment import CreateComment, UpdateComment
+from src.dto.comment import CreateComment, DeleteComment, UpdateComment
 
 from src.entities.comment import Comment
 from src.use_cases.use_cases import UseCases
@@ -11,7 +11,6 @@ from src.use_cases.use_cases import UseCases
 
 @fixture
 def comments():
-    iso = "2021-11-18T17:16:17.818543"
     comment1 = Comment(
         id=uuid.uuid4(),
         comment="test comment 1",
@@ -71,6 +70,22 @@ def comment_without_id(init_comment):
     return comment
 
 
+@fixture
+def comment_not_found() -> UseCases:
+    repo = mock.Mock()
+    repo.getCommentById.return_value = None
+    use_cases = UseCases(repo)
+    return use_cases
+
+
+@fixture
+def user_not_comment_author(init_comment):
+    repo = mock.Mock()
+    repo.getCommentById.return_value = Comment.from_dict(init_comment)
+    use_cases = UseCases(repo)
+    return use_cases
+
+
 def test_add_comment(init_comment):
     repo = mock.Mock()
     repo.createComment.return_value = Comment.from_dict(init_comment)
@@ -124,33 +139,57 @@ def test_update_comment_successful(comment_without_id, use_id):
     assert comment.comment != init_comment["comment"]
 
 
-def test_updated_comment_throws_error_if_id_not_found():
-    repo = mock.Mock()
-    repo.getCommentById.return_value = None
-
-    use_cases = UseCases(repo)
-
+def test_updated_comment_raises_exception_if_comment_not_found(
+    comment_not_found: UseCases,
+):
     request: UpdateComment = {
         "id": use_id,
         "comment": "new test comment 1",
         "commentBy": "test_user_3",
     }
+    use_cases = comment_not_found
 
     with raises(Exception):
         use_cases.updateComment(request)
 
 
-def test_update_comment_raises_exception_if_user_not_comment_author(init_comment):
-    repo = mock.Mock()
-    repo.getCommentById.return_value = Comment.from_dict(init_comment)
-
-    use_cases = UseCases(repo)
-
+def test_update_comment_raises_exception_if_user_not_comment_author(
+    user_not_comment_author: UseCases,
+):
     request: UpdateComment = {
         "id": use_id,
         "comment": "new test comment 1",
         "commentBy": "unauthorized_user",
     }
+    use_cases = user_not_comment_author
 
     with raises(Exception):
         use_cases.updateComment(request)
+
+
+def test_delete_comment_successful():
+    pass
+
+
+def test_delete_comment_raises_exception_if_comment_not_found(
+    use_id: uuid.UUID,
+    comment_not_found: UseCases,
+):
+    request: DeleteComment = {"id": use_id, "commentBy": use_id}
+    use_cases = comment_not_found
+
+    with raises(Exception):
+        use_cases.deleteComment(request)
+
+
+def test_delete_comment_raises_exception_if_user_not_comment_author(
+    user_not_comment_author: UseCases,
+):
+    request: DeleteComment = {
+        "id": use_id,
+        "commentBy": "unauthorized_user",
+    }
+    use_cases = user_not_comment_author
+
+    with raises(Exception):
+        use_cases.deleteComment(request)
