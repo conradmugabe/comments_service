@@ -2,8 +2,8 @@ import uuid
 from unittest import mock
 from datetime import datetime
 
-from pytest import fixture
-from src.dto.comment import CreateComment
+from pytest import fixture, raises
+from src.dto.comment import CreateComment, UpdateComment
 
 from src.entities.comment import Comment
 from src.use_cases.use_cases import UseCases
@@ -48,6 +48,11 @@ def comments():
 
 
 @fixture
+def use_id() -> uuid.UUID:
+    return uuid.uuid4()
+
+
+@fixture
 def init_comment():
     return {
         "id": uuid.uuid4(),
@@ -57,6 +62,13 @@ def init_comment():
         "createdAt": datetime.fromisoformat("2021-11-18T17:16:17.818543"),
         "updatedAt": datetime.fromisoformat("2021-11-18T17:16:17.818543"),
     }
+
+
+@fixture
+def comment_without_id(init_comment):
+    comment = init_comment
+    del comment["id"]
+    return comment
 
 
 def test_add_comment(init_comment):
@@ -79,3 +91,66 @@ def test_add_comment(init_comment):
     assert comment.commentBy == init_comment.get("commentBy")
     assert comment.createdAt == init_comment.get("createdAt")
     assert comment.updatedAt == init_comment.get("updatedAt")
+
+
+def test_update_comment_successful(comment_without_id, use_id):
+    init_comment = comment_without_id
+    init_comment["id"] = use_id
+    repo = mock.Mock()
+    repo.getCommentById.return_value = Comment.from_dict(init_comment)
+    repo.updateCommentById.return_value = Comment.from_dict(
+        {
+            "id": use_id,
+            "comment": "new test comment 1",
+            "commentBy": "test_user_3",
+            "commentOn": "test_blog_3",
+            "createdAt": datetime.fromisoformat("2021-11-18T17:16:17.818543"),
+            "updatedAt": datetime.fromisoformat("2021-11-18T17:16:17.818543"),
+        }
+    )
+
+    request: UpdateComment = {
+        "id": use_id,
+        "comment": "new test comment 1",
+        "commentBy": "test_user_3",
+    }
+
+    use_case = UseCases(repo)
+    comment = use_case.updateComment(request)
+
+    assert comment.id == use_id
+    assert comment.commentBy == request["commentBy"]
+    assert comment.comment == "new test comment 1"
+    assert comment.comment != init_comment["comment"]
+
+
+def test_updated_comment_throws_error_if_id_not_found():
+    repo = mock.Mock()
+    repo.getCommentById.return_value = None
+
+    use_cases = UseCases(repo)
+
+    request: UpdateComment = {
+        "id": use_id,
+        "comment": "new test comment 1",
+        "commentBy": "test_user_3",
+    }
+
+    with raises(Exception):
+        use_cases.updateComment(request)
+
+
+def test_update_comment_raises_exception_if_user_not_comment_author(init_comment):
+    repo = mock.Mock()
+    repo.getCommentById.return_value = Comment.from_dict(init_comment)
+
+    use_cases = UseCases(repo)
+
+    request: UpdateComment = {
+        "id": use_id,
+        "comment": "new test comment 1",
+        "commentBy": "unauthorized_user",
+    }
+
+    with raises(Exception):
+        use_cases.updateComment(request)

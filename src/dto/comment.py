@@ -13,8 +13,10 @@ class CreateComment(TypedDict):
     commentOn: CommentOn
 
 
-class UpdateComment(CreateComment, TypedDict):
+class UpdateComment(TypedDict):
     id: CommentId
+    commentBy: CommentBy
+    comment: Comment
 
 
 class DeleteComment(TypedDict):
