@@ -42,7 +42,7 @@ class UseCases:
         return comment
 
     @staticmethod
-    def __isCommentAuthor(comment: Comment, id: CommentBy):
-        if comment.commentBy == id:
+    def __isCommentAuthor(comment: Comment, commentBy: CommentBy):
+        if comment.commentBy == commentBy:
             return True
         raise Exception("403! you don't have the permission to update this resource")
