@@ -79,7 +79,7 @@ def comment_not_found() -> UseCases:
 
 
 @fixture
-def user_not_comment_author(init_comment):
+def comment_found(init_comment):
     repo = mock.Mock()
     repo.getCommentById.return_value = Comment.from_dict(init_comment)
     use_cases = UseCases(repo)
@@ -154,14 +154,14 @@ def test_updated_comment_raises_exception_if_comment_not_found(
 
 
 def test_update_comment_raises_exception_if_user_not_comment_author(
-    user_not_comment_author: UseCases,
+    comment_found: UseCases,
 ):
     request: UpdateComment = {
         "id": use_id,
         "comment": "new test comment 1",
         "commentBy": "unauthorized_user",
     }
-    use_cases = user_not_comment_author
+    use_cases = comment_found
 
     with raises(Exception):
         use_cases.updateComment(request)
@@ -183,13 +183,13 @@ def test_delete_comment_raises_exception_if_comment_not_found(
 
 
 def test_delete_comment_raises_exception_if_user_not_comment_author(
-    user_not_comment_author: UseCases,
+    comment_found: UseCases,
 ):
     request: DeleteComment = {
         "id": use_id,
         "commentBy": "unauthorized_user",
     }
-    use_cases = user_not_comment_author
+    use_cases = comment_found
 
     with raises(Exception):
         use_cases.deleteComment(request)
