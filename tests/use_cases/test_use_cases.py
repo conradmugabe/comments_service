@@ -193,3 +193,20 @@ def test_delete_comment_raises_exception_if_user_not_comment_author(
 
     with raises(Exception):
         use_cases.deleteComment(request)
+
+
+def test_get_comment_successful(comment_found: UseCases, init_comment):
+    use_cases = comment_found
+    comment = use_cases.getComment(init_comment["id"])
+
+    assert comment == Comment.from_dict(init_comment)
+
+
+def test_get_comment_raises_exception_if_comment_not_found(
+    comment_not_found: UseCases, use_id: uuid.UUID
+):
+    request = use_id
+    use_cases = comment_not_found
+
+    with raises(Exception):
+        use_cases.getComment(request)

@@ -32,7 +32,7 @@ class UseCases:
         self.__isCommentAuthor(comment, commentBy)
         return self.repository.deleteCommentById(commentId)
 
-    def getCommentById(self, id: CommentId):
+    def getComment(self, id: CommentId):
         return self.__getCommentById(id)
 
     def __getCommentById(self, id: CommentId):
