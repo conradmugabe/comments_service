@@ -200,6 +200,7 @@ def test_get_comment_successful(comment_found: UseCases, init_comment):
     comment = use_cases.getComment(init_comment["id"])
 
     assert comment == Comment.from_dict(init_comment)
+    assert comment.id == init_comment["id"]
 
 
 def test_get_comment_raises_exception_if_comment_not_found(
@@ -210,3 +211,14 @@ def test_get_comment_raises_exception_if_comment_not_found(
 
     with raises(Exception):
         use_cases.getComment(request)
+
+
+def test_get_comments_by_comment_on_id(comments: list[Comment], use_id: uuid.UUID):
+    repo = mock.Mock()
+    repo.getComments.return_value = comments
+    use_cases = UseCases(repo)
+
+    comments_comment_on = use_cases.getComments(use_id)
+
+    assert len(comments_comment_on) == len(comments)
+    assert comments_comment_on == comments

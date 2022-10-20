@@ -14,7 +14,7 @@ class UseCases:
     def __init__(self, repository: Repository) -> None:
         self.repository = repository
 
-    def listComments(self, props: GetComments):
+    def getComments(self, props: GetComments):
         return self.repository.getComments(props)
 
     def addComment(self, props: CreateComment):
