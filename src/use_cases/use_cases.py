@@ -41,7 +41,8 @@ class UseCases:
             raise Exception("No comment with given Id found")
         return comment
 
-    def __isCommentAuthor(self, comment: Comment, id: CommentBy):
+    @staticmethod
+    def __isCommentAuthor(comment: Comment, id: CommentBy):
         if comment.commentBy == id:
             return True
         raise Exception("403! you don't have the permission to update this resource")
